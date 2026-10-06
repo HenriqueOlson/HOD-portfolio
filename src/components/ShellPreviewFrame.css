@@ -1,0 +1,50 @@
+@import './v3shell/tokens.css';
+
+.v3-shell-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1280 / 800;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  background: #fff;
+}
+
+.v3-shell-preview {
+  --background: #fff;
+  --foreground: #111827;
+  --card: #fff;
+  --card-foreground: #111827;
+  --popover: #fff;
+  --popover-foreground: #111827;
+  --primary: #0084f8;
+  --primary-foreground: #fff;
+  --muted: #f3f4f6;
+  --muted-foreground: #6b7280;
+  --border: #e5e7eb;
+  --radius: 0.625rem;
+  position: absolute;
+  inset: 0 auto auto 0;
+  transform-origin: top left;
+  color: #111827;
+  background: #fff;
+  font: 400 14px/1.5 'Open Sans', sans-serif;
+  text-align: left;
+  color-scheme: light;
+}
+
+/* Keep case-study typography outside both embedded product previews. */
+.v3-shell-preview :is(h1, h2, h3, h4, h5, h6, p, ul, ol, li) {
+  margin: 0;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  letter-spacing: normal;
+}
+
+.v3-shell-preview button { line-height: inherit; }
+.v3-shell-preview .no-scrollbar { scrollbar-width: none; }
+.v3-shell-preview .no-scrollbar::-webkit-scrollbar { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .v3-shell-preview * { transition: none !important; animation: none !important; }
+}

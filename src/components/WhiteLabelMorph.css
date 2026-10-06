@@ -1,0 +1,93 @@
+.white-label-demo { min-width: 0; }
+
+.white-label-demo .v3-shell-preview {
+  pointer-events: none;
+  user-select: none;
+}
+
+.white-label-demo-toolbar {
+  display: flex;
+  min-height: 3.25rem;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.85rem;
+  font: 400 0.75rem/1.4 'Open Sans', sans-serif;
+}
+
+.white-label-demo-switch {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 0.2rem;
+  border-radius: 0.65rem;
+  background: #242424;
+  padding: 0.25rem;
+}
+
+.white-label-demo-switch button {
+  min-width: 4.25rem;
+  border-radius: 0.45rem;
+  padding: 0.55rem 0.9rem;
+  background: transparent;
+  color: #aaa;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 240ms ease, color 240ms ease;
+}
+
+.white-label-demo-switch button[aria-pressed='true'] {
+  background: #47c2b1;
+  color: #131313;
+}
+
+.white-label-demo-playback {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-left: auto;
+  border-radius: 0.45rem;
+  padding: 0.5rem 0.6rem;
+  color: #b8b8b8;
+  cursor: pointer;
+}
+
+.white-label-demo-playback:hover { background: #242424; color: #fff; }
+
+.white-label-demo-toolbar button:focus-visible {
+  outline: 2px solid #47c2b1;
+  outline-offset: 3px;
+}
+
+.white-label-demo-progress {
+  height: 2px;
+  overflow: hidden;
+  margin-top: 0.75rem;
+  background: #282828;
+}
+
+.white-label-demo-progress span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #47c2b1;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.white-label-demo-progress span[data-playing='true'] {
+  animation: white-label-demo-progress linear both;
+}
+
+@keyframes white-label-demo-progress {
+  to { transform: scaleX(1); }
+}
+
+@media (max-width: 480px) {
+  .white-label-demo-toolbar { gap: 0.65rem; }
+  .white-label-demo-switch button { min-width: 3.5rem; padding-inline: 0.7rem; }
+  .white-label-demo-playback span { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .white-label-demo-toolbar button { transition: none; }
+  .white-label-demo-progress { display: none; }
+}

@@ -23,6 +23,7 @@ const projectsCollection = defineCollection({
 
     // Status
     passwordProtected: z.boolean().default(false),
+    accessPasswordHash: z.string().optional(),
     comingSoon: z.boolean().default(false),
 
     // Ordering
@@ -33,6 +34,8 @@ const projectsCollection = defineCollection({
       metric: z.string(),
       description: z.string(),
     })).optional(),
+    keyResultsTitle: z.string().optional(),
+    keyResultsPrefix: z.string().optional(),
 
     // Featured projects to show at bottom of project page
     featuredProjectSlugs: z.array(z.string()).optional(),

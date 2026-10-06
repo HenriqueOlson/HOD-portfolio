@@ -1,19 +1,231 @@
 ---
 title: "DealRoom"
 displayTitle: "DEALROOM"
-titleColor: "#B794F6"
+titleColor: "#47C2B1"
 client: "KoreInside"
-cardDescription: "Sales to production, AI-driven."
-overviewDescription: "Sales to production, AI-driven. The DealRoom case study is coming soon."
-badges: ["Web", "Soon"]
-tags: ["AI", "Workflow", "Product Development"]
+cardDescription: "Sales to production, a trip from prototypes to a re-architecture."
+overviewDescription: "Observing difficulties across internal processes, I led a change using AI to optimize workflows across Sales, Engineering, Product, and Design."
+badges: ["Web", "AI"]
+tags: ["Scalability", "AI adoption", "Design systems"]
 cardImage: "/images/projects/dealroom-cover.png"
-passwordProtected: false
-comingSoon: true
+passwordProtected: true
+accessPasswordHash: "746b0208aeb18494b17c47e1460279be27adc455e580ec7ad3cc3377b4ccb927"
+comingSoon: false
 order: 1
+keyResults:
+  - metric: "Current features uplift"
+    description: "Pushing the whole platform into the new information architecture."
+  - metric: "AI-supported design"
+    description: "Changed how the design team builds features, adopting rapid but consistent AI design."
+  - metric: "40%"
+    description: "client conversion from the branded prototype strategy."
+  - metric: "White-label codebase uplift"
+    description: "Modernized the system behind client platforms with a Storybook strategy and controlled customization."
+  - metric: "Reduced internal team workloads"
+    description: "Improved workflows across the teams involved."
+  - metric: "Less back-and-forth"
+    description: "Minimized time spent on communication between teams."
+keyResultsTitle: "Impact"
+keyResultsPrefix: "-"
 featuredProjectSlugs: ["questwealth", "profile"]
 ---
+import PrototypeCarousel from '../../components/PrototypeCarousel';
+import PairedMediaGallery from '../../components/PairedMediaGallery';
+import ShellAnatomy from '../../components/ShellAnatomy';
+import WhiteLabelMorph from '../../components/WhiteLabelMorph';
+import DealroomSolutionComparison from '../../components/DealroomSolutionComparison';
+import ExpandableImagePair from '../../components/ExpandableImagePair';
 
-## Coming Soon
+## Sales Prototypes
 
-Sales to production, AI-driven. The DealRoom case study is coming soon.
+### Context
+
+Sales representatives used prototypes to show prospective clients the platform's capabilities. They often asked designers to adjust prototypes to match a client's website and brand. This work usually took a couple of days, but short deadlines led to rushed prototypes with missing links and gaps that interfered with sales.
+
+<PrototypeCarousel
+  client:load
+  images={[
+    {
+      src: '/images/projects/dealroom-carousel-1.png',
+      alt: 'Sales prototype board showing a collection of website and investment flows.',
+    },
+    {
+      src: '/images/projects/dealroom-carousel-2.png',
+      alt: 'Sales prototype board showing detailed registration and offering workflows.',
+    },
+    {
+      src: '/images/projects/dealroom-carousel-3.png',
+      alt: 'Sales prototype board showing logged-in, investment, messaging, and account flows.',
+    },
+  ]}
+/>
+<p class="mt-3 font-seravek text-base text-muted-foreground">Unorganized files, hindering the branding swap.</p>
+
+### Employing AI to resolve the problem
+
+I crafted master prototypes for each platform type, reusing feature modules to control iterations and remix fully working, prospect-branded prototypes.
+
+<PairedMediaGallery
+  client:load
+  images={[
+    {
+      src: '/images/projects/dealroom-sell-sol-2.png',
+      alt: 'A collection of branded master platform prototypes for IBP, Marketplace, SoloFunding, CapitalMarkets, and FundingPlatform.',
+      label: 'Platform-type master prototypes',
+    },
+    {
+      src: '/images/projects/dealroom-sell-sol-1.png',
+      alt: 'Reusable product modules, including admin tools and a dashboard module.',
+      label: 'Reusable feature modules',
+    },
+  ]}
+/>
+The approach reduced preparation from two days to two hours, maintaining the sales momentum. Within four months, 40% of the prototypes created had converted into clients.
+
+## Storybook, consistency for future
+
+<h3 id="reimagining-the-architecture-and-adding-a-layer-of-control-able-to-scale-for-new-lines-of-business" class="case-study-deck">Reimagining the architecture and adding a layer of control, able to scale for new lines of business</h3>
+
+#### Background
+
+Moving forward from the prototype solution, a challenge became clear: how could we control what AI generated and ensure consistency for current and new features, now that teams could explore features more easily? The platform's original information architecture had lost hierarchy over time as new functions and actions were added. Its design system was not meeting the needs of this range of products.
+
+<ExpandableImagePair
+  client:load
+  images={[
+    {
+      src: '/images/projects/dealroom-background-one.png',
+      alt: 'KYC compliance screen with dense status tabs, investor details, controls, and documents.',
+    },
+    {
+      src: '/images/projects/dealroom-background-two.png',
+      alt: 'DealRoom regulatory screen with many sections, forms, cards, and completion indicators.',
+    },
+  ]}
+  tagline="Visual load identified in multiple areas."
+/>
+
+#### Vision
+
+My goal was to start a scalable strategy that would change how Kore builds its products. AI could power the work, but research was needed to establish the knowledge base and direction for the design system.
+
+##### Current patterns
+
+<ul class="case-insight-list">
+  <li>The highest level was a choice between personal or company-based features.</li>
+  <li>Some users could own multiple clients under company-based features.</li>
+  <li>The loaded content level lacked hierarchy.</li>
+</ul>
+
+##### Current processes
+
+<ul class="case-insight-list">
+  <li>Different codebases were used for white-label client platforms and the Kore platform, increasing the time, cost, and effort needed to keep them consistent and up to date.</li>
+</ul>
+
+##### Uncover opportunities
+
+<ul class="case-insight-list">
+  <li>Assess where new scalable components could be included.</li>
+</ul>
+
+#### Solution
+
+I started executing my vision by evolving the design system into a code based components storybook. It guided exploration and supported consistent AI generation through a configured Storybook skill. The standards established for control and consistency were:
+
+<ol class="case-standard-list">
+  <li><span class="case-standard-number" aria-hidden="true">01</span>Components built on a token architecture to control white-label customization intentionally.</li>
+  <li><span class="case-standard-number" aria-hidden="true">02</span>A remodeled hierarchy to support new lines of business through a component named Shell.</li>
+  <li><span class="case-standard-number" aria-hidden="true">03</span>Hybrid components that cover multiple scenarios.</li>
+  <li><span class="case-standard-number" aria-hidden="true">04</span>Adaptive design readiness.</li>
+</ol>
+
+#### Shell
+
+The Shell is the main architectural structure, carrying hierarchy levels, access points, responsive behavior, and interaction logic.
+
+<ShellAnatomy client:load />
+
+#### Wizard
+
+The Wizard is a multi-step task flow with full-screen and overlay versions that share the same inner structure. It can support different tasks, including resolving multiple compliance requirements after login, replacing the many pop-ups that interrupt users.
+
+<PairedMediaGallery
+  client:load
+  groupLabel="Pop-ups problem and multi-steps wizard comparison"
+  images={[
+    {
+      src: '/images/projects/dealroom-popup-problem.png',
+      alt: 'Overlapping account requirement pop-ups interrupt a company dashboard.',
+      label: 'Pop-ups problem',
+    },
+    {
+      src: '/images/projects/dealroom-multistep-wizard.png',
+      alt: 'A multi-step Resolve account requirements wizard focuses the personal information form.',
+      label: 'Multi-steps wizard',
+    },
+  ]}
+/>
+<p class="mt-3 font-seravek text-base text-muted-foreground">The multi-step wizard hold all current pendencies</p>
+
+#### White-labels layout
+
+Client platforms share and integrate features with the main back end. I reused the Shell's Content Level 2 anatomy, carrying its rules and logic into white-labels to keep the main platform and client platforms in sync.
+
+<WhiteLabelMorph client:visible />
+
+## DealRoom, the debt
+
+<p class="case-study-deck">Allow companies to start the offering setup themselves, reducing back-and-forth with Customer Service and Engineering.</p>
+
+### Project Overview
+
+KoreInside is an ecosystem for private markets, a compliance-first environment for multiple client profiles. DealRoom is where a new offering comes to life through the issuance process.
+
+### Debt
+
+When a company wants to raise capital, the information gathering and offering setup are handled manually by an internal engineer and a Client Success agent. This can take several days or weeks, with many back-and-forth emails.
+
+### Goal
+
+Enable companies to configure the offering themselves.
+
+### AI-first approach
+
+With Storybook available, it became faster to build, review, and refine flows internally through workshop recordings and AI skills, while ensuring consistency.
+
+### Design challenge
+
+Guide companies through all regulatory information required to start an offering. The volume of information, often uploaded by different agents working in the same environment, makes DealRoom challenging.
+
+### Solution
+
+Centralize the most crucial forms in the full Wizard component for a focused experience.
+
+<DealroomSolutionComparison client:visible />
+
+Visually efficient recognition of information that is still required. Visibility into the minimum required completion. Content arrangement that saves space.
+
+<figure id="visual-aids-content-arrangement" class="my-8">
+  <video
+    class="block h-auto w-full rounded-lg bg-[#202020]"
+    autoPlay
+    muted
+    loop
+    playsInline
+    controls
+    preload="metadata"
+    aria-label="Visual aids: content arrangement"
+  >
+    <source src="/videos/projects/dealroom-content-arrangement.mov" />
+  </video>
+  <figcaption class="mt-3 font-seravek text-base leading-relaxed text-muted-foreground">
+    Content rearrangement into new added components.
+  </figcaption>
+</figure>
+
+### AI workflows callout
+
+<aside class="my-8 rounded-lg border-l-4 border-primary bg-[#202020] p-6">
+  Conducted workshops about features and user flows, turning meeting transcripts into Product Requirements Documents with AI. Then generated the UI and flows using those PRDs tied to the Storybook skills.
+</aside>
