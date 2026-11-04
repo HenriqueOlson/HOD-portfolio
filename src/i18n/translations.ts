@@ -9,6 +9,19 @@ export type Language = keyof typeof languages;
 
 export const translations = {
   en: {
+    access: {
+      eyebrow: 'Portfolio access',
+      title: 'Choose how to explore',
+      description: 'View the open projects or enter your password to see the full portfolio.',
+      visitor: 'Continue as a visitor',
+      havePassword: 'I have a password',
+      passwordLabel: 'Portfolio password',
+      passwordPlaceholder: 'Enter your password',
+      invalidPassword: 'That password did not match. Try again.',
+      back: 'Back',
+      unlock: 'View all projects',
+      expiry: 'Your access lasts for 10 minutes.',
+    },
     nav: {
       about: 'About',
       portfolio: 'Portfolio',
@@ -152,6 +165,19 @@ export const translations = {
     },
   },
   pt: {
+    access: {
+      eyebrow: 'Acesso ao portfólio',
+      title: 'Escolha como explorar',
+      description: 'Veja os projetos abertos ou insira sua senha para acessar o portfólio completo.',
+      visitor: 'Continuar como visitante',
+      havePassword: 'Tenho uma senha',
+      passwordLabel: 'Senha do portfólio',
+      passwordPlaceholder: 'Digite sua senha',
+      invalidPassword: 'A senha não confere. Tente novamente.',
+      back: 'Voltar',
+      unlock: 'Ver todos os projetos',
+      expiry: 'Seu acesso dura 10 minutos.',
+    },
     nav: {
       about: 'Sobre',
       portfolio: 'Portfólio',

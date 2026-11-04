@@ -29,8 +29,10 @@ const featuredProjects = project.data.featuredProjectSlugs
   : allProjects.filter((p) => p.slug !== project.slug).slice(0, 2);
 ---
 
-<BaseLayout title={`${project.data.title} - Henrique Olson`} description={project.data.cardDescription}>
+<BaseLayout lang={lang} title={`${project.data.title} - Henrique Olson`} description={project.data.cardDescription}>
   <Header lang={lang} currentPath={`/${project.slug}`} />
+
+  {isPasswordProtected && <div data-protected-project="true" hidden />}
 
   {isPasswordProtected && (
     <section
@@ -221,8 +223,17 @@ const featuredProjects = project.data.featuredProjectSlugs
     const passwordInput = form?.querySelector<HTMLInputElement>('input[name="password"]');
     const errorMessage = gate?.querySelector<HTMLElement>('[data-access-error]');
     const expectedHash = gate?.dataset.passwordHash;
+    const accessKey = 'portfolio-site-access';
 
     if (gate && form && content && passwordInput && errorMessage && expectedHash) {
+      const readSession = () => {
+        try {
+          const session = JSON.parse(sessionStorage.getItem(accessKey) || 'null');
+          if (session && (session.mode === 'visitor' || session.mode === 'password') && session.expiresAt > Date.now()) return session;
+        } catch { /* Start locked if session storage is unavailable. */ }
+        return null;
+      };
+
       const unlockCase = () => {
         gate.hidden = true;
         content.hidden = false;
@@ -236,11 +247,19 @@ const featuredProjects = project.data.featuredProjectSlugs
         passwordInput.removeAttribute('aria-invalid');
       };
 
-      // A restored back/forward page must show the prompt again too.
-      window.addEventListener('pagehide', lockCase);
-      window.addEventListener('pageshow', (event) => {
-        if (event.persisted) lockCase();
-      });
+      const applySession = (session) => {
+        if (session?.mode === 'password' && session.expiresAt > Date.now()) {
+          unlockCase();
+        } else if (session?.mode === 'visitor' && session.expiresAt > Date.now()) {
+          window.location.replace(`${document.body.dataset.homePath || '/'}#portfolio`);
+        } else {
+          lockCase();
+        }
+      };
+
+      applySession(readSession());
+      window.addEventListener('portfolio-access-mode-change', (event) => applySession(event.detail));
+      window.addEventListener('portfolio-access-expired', lockCase);
 
       passwordInput.addEventListener('input', () => {
         errorMessage.hidden = true;
@@ -259,7 +278,9 @@ const featuredProjects = project.data.featuredProjectSlugs
             .join('');
 
           if (hash === expectedHash) {
-            unlockCase();
+            const session = { mode: 'password', expiresAt: Date.now() + 10 * 60 * 1000 };
+            sessionStorage.setItem(accessKey, JSON.stringify(session));
+            window.dispatchEvent(new CustomEvent('portfolio-access-mode-change', { detail: session }));
             return;
           }
         } catch {

@@ -25,7 +25,7 @@ const contact = t('contact');
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 ---
 
-<BaseLayout>
+<BaseLayout lang={lang}>
   <Header lang={lang} currentPath={lang === 'en' ? '/' : '/pt/'} />
 
   <!-- Hero Section -->

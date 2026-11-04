@@ -1,15 +1,24 @@
 ---
 import '../styles/global.css';
+import { getCollection } from 'astro:content';
+import type { Language } from '../i18n/translations';
+import { useTranslations } from '../i18n/translations';
 
 interface Props {
   title?: string;
   description?: string;
+  lang?: Language;
 }
 
 const {
   title = 'Henrique Olson - Product Designer',
-  description = 'Turning complex challenges into successful digital products.'
+  description = 'Turning complex challenges into successful digital products.',
+  lang = 'en',
 } = Astro.props;
+const accessText = useTranslations(lang)('access');
+const projects = await getCollection('projects');
+const accessPasswordHash = projects.find((project) => project.data.accessPasswordHash)?.data.accessPasswordHash ?? '';
+const homePath = lang === 'pt' ? '/pt/' : '/';
 ---
 
 <!doctype html>
@@ -114,7 +123,163 @@ const {
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   </head>
-  <body class="min-h-screen bg-background text-foreground">
+  <body class="min-h-screen bg-background text-foreground" data-access-password-hash={accessPasswordHash} data-home-path={homePath}>
     <slot />
+
+    <div class="site-access-overlay" data-site-access-overlay hidden>
+      <section class="site-access-dialog" role="dialog" aria-modal="true" aria-labelledby="site-access-title" aria-describedby="site-access-description">
+        <p class="site-access-eyebrow">{accessText.eyebrow}</p>
+        <h2 id="site-access-title" class="site-access-title">{accessText.title}</h2>
+        <p id="site-access-description" class="site-access-description">{accessText.description}</p>
+
+        <div class="site-access-choices" data-access-choices>
+          <button type="button" class="site-access-visitor" data-access-visitor>{accessText.visitor}</button>
+          <button type="button" class="site-access-password-choice" data-access-password-choice>{accessText.havePassword}</button>
+        </div>
+
+        <form class="site-access-form" data-site-access-form hidden>
+          <label for="site-access-password">{accessText.passwordLabel}</label>
+          <input id="site-access-password" name="password" type="password" autocomplete="current-password" required placeholder={accessText.passwordPlaceholder} aria-describedby="site-access-error" />
+          <p id="site-access-error" class="site-access-error" role="alert" aria-live="polite" data-site-access-error hidden>{accessText.invalidPassword}</p>
+          <div class="site-access-form-actions">
+            <button type="button" class="site-access-back" data-access-back>{accessText.back}</button>
+            <button type="submit" class="site-access-submit">{accessText.unlock}</button>
+          </div>
+        </form>
+
+        <p class="site-access-expiry">{accessText.expiry}</p>
+      </section>
+    </div>
+
+    <script is:inline>
+      (() => {
+        const overlay = document.querySelector('[data-site-access-overlay]');
+        const visitorButton = overlay?.querySelector('[data-access-visitor]');
+        const passwordChoiceButton = overlay?.querySelector('[data-access-password-choice]');
+        const choices = overlay?.querySelector('[data-access-choices]');
+        const form = overlay?.querySelector('[data-site-access-form]');
+        const backButton = overlay?.querySelector('[data-access-back]');
+        const input = form?.querySelector('input[name="password"]');
+        const errorMessage = overlay?.querySelector('[data-site-access-error]');
+        const accessKey = 'portfolio-site-access';
+        const sessionLength = 10 * 60 * 1000;
+        let expiryTimer;
+
+        if (!overlay || !visitorButton || !passwordChoiceButton || !choices || !form || !backButton || !input || !errorMessage) return;
+
+        const readSession = () => {
+          try {
+            const session = JSON.parse(sessionStorage.getItem(accessKey) || 'null');
+            if (session && (session.mode === 'visitor' || session.mode === 'password') && session.expiresAt > Date.now()) return session;
+          } catch { /* Start a fresh access choice when storage is unavailable. */ }
+          sessionStorage.removeItem(accessKey);
+          return null;
+        };
+
+        const showDialog = () => {
+          overlay.hidden = false;
+          document.body.classList.add('site-access-open');
+          window.requestAnimationFrame(() => (input.offsetParent ? input : visitorButton).focus());
+        };
+
+        const hideDialog = () => {
+          overlay.hidden = true;
+          document.body.classList.remove('site-access-open');
+        };
+
+        const expireSession = () => {
+          sessionStorage.removeItem(accessKey);
+          window.clearTimeout(expiryTimer);
+          document.querySelectorAll('[data-password-protected="true"]').forEach((card) => { card.hidden = false; });
+          window.dispatchEvent(new CustomEvent('portfolio-access-expired'));
+          showDialog();
+        };
+
+        const saveSession = (mode) => {
+          const session = { mode, expiresAt: Date.now() + sessionLength };
+          sessionStorage.setItem(accessKey, JSON.stringify(session));
+          document.querySelectorAll('[data-password-protected="true"]').forEach((card) => {
+            card.hidden = mode === 'visitor';
+          });
+          hideDialog();
+          window.dispatchEvent(new CustomEvent('portfolio-access-mode-change', { detail: session }));
+          expiryTimer = window.setTimeout(expireSession, sessionLength);
+
+          if (mode === 'visitor' && document.querySelector('[data-protected-project="true"]')) {
+            window.location.replace(`${document.body.dataset.homePath || '/'}#portfolio`);
+          }
+        };
+
+        const activatePasswordEntry = () => {
+          choices.hidden = true;
+          form.hidden = false;
+          errorMessage.hidden = true;
+          input.focus();
+        };
+
+        visitorButton.addEventListener('click', () => saveSession('visitor'));
+        passwordChoiceButton.addEventListener('click', activatePasswordEntry);
+        backButton.addEventListener('click', () => {
+          form.hidden = true;
+          choices.hidden = false;
+          errorMessage.hidden = true;
+          input.value = '';
+          visitorButton.focus();
+        });
+        input.addEventListener('input', () => {
+          errorMessage.hidden = true;
+          input.removeAttribute('aria-invalid');
+        });
+
+        form.addEventListener('submit', async (event) => {
+          event.preventDefault();
+          errorMessage.hidden = true;
+          const expectedHash = document.body.dataset.accessPasswordHash;
+          try {
+            const bytes = new TextEncoder().encode(input.value);
+            const digest = await window.crypto.subtle.digest('SHA-256', bytes);
+            const hash = Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('');
+            if (expectedHash && hash === expectedHash) {
+              saveSession('password');
+              return;
+            }
+          } catch { /* Keep the form available if browser cryptography is unavailable. */ }
+          errorMessage.hidden = false;
+          input.setAttribute('aria-invalid', 'true');
+          input.focus();
+        });
+
+        overlay.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape') event.preventDefault();
+          if (event.key !== 'Tab') return;
+          const focusable = Array.from(overlay.querySelectorAll('button:not([disabled]), input:not([disabled])')).filter((element) => !element.closest('[hidden]'));
+          const first = focusable[0];
+          const last = focusable[focusable.length - 1];
+          if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+          } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+          }
+        });
+
+        const currentSession = readSession();
+        if (currentSession) {
+          document.querySelectorAll('[data-password-protected="true"]').forEach((card) => {
+            card.hidden = currentSession.mode === 'visitor';
+          });
+          window.setTimeout(() => window.dispatchEvent(new CustomEvent('portfolio-access-mode-change', { detail: currentSession })), 0);
+          expiryTimer = window.setTimeout(expireSession, currentSession.expiresAt - Date.now());
+          if (currentSession.mode === 'visitor' && document.querySelector('[data-protected-project="true"]')) {
+            window.location.replace(`${document.body.dataset.homePath || '/'}#portfolio`);
+          } else {
+            hideDialog();
+          }
+        } else {
+          showDialog();
+        }
+      })();
+    </script>
   </body>
 </html>
